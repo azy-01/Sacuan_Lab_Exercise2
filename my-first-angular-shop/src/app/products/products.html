@@ -1,0 +1,74 @@
+<!--Shop Section-->
+<section class="shop">
+  <!-- Toast Notification -->
+  <div class="toast" *ngIf="toastVisible">{{ toastMessage }}</div>
+
+  <!-- Search Bar -->
+  <div class="shop-search">
+    <input type="text" placeholder="Search a product name" [(ngModel)]="searchQuery" />
+    <button>Search</button>
+  </div>
+
+  <div class="shop-container">
+    <!-- Products Grid -->
+    <div class="products">
+      <p *ngIf="filteredProducts.length === 0" class="no-results">
+        No products found for "{{ searchQuery }}".
+      </p>
+
+      <div class="product-card" *ngFor="let product of filteredProducts">
+        <div class="image-container">
+          <img [src]="product.image" [alt]="product.name" />
+          <span class="out-of-stock" *ngIf="!product.inStock">Out of Stock</span>
+        </div>
+        <h4>{{ product.name }}</h4>
+        <p class="rating">{{ product.rating }}</p>
+        <div class="price-row">
+          <p class="price">${{ product.price.toFixed(2) }}</p>
+        </div>
+        <button
+          (click)="addToCart(product)"
+          [disabled]="!product.inStock"
+          [class.disabled-btn]="!product.inStock"
+        >
+          {{ product.inStock ? 'Add to Cart' : 'Unavailable' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Cart Section -->
+    <div class="cart">
+      <div class="cart-header">
+        <h3>Your Cart</h3>
+        <div class="cart-icon">
+          <img src="images/cart.png" alt="Cart" />
+          <span class="cart-count">{{ cartCount }}</span>
+        </div>
+      </div>
+
+      <div class="cart-body" *ngIf="cartItems.length === 0">
+        <p>Your cart is empty</p>
+      </div>
+
+      <div class="cart-body cart-items" *ngIf="cartItems.length > 0">
+        <div class="cart-item" *ngFor="let item of cartItems">
+          <img [src]="item.product.image" [alt]="item.product.name" />
+          <div class="cart-item-info">
+            <p class="cart-item-name">{{ item.product.name }}</p>
+            <p class="cart-item-qty">x{{ item.quantity }}</p>
+            <p class="cart-item-price">${{ (item.product.price * item.quantity).toFixed(2) }}</p>
+          </div>
+          <button class="remove-btn" (click)="removeFromCart(item)">✕</button>
+        </div>
+      </div>
+
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span class="cart-price">${{ cartTotal.toFixed(2) }}</span>
+        </div>
+        <button (click)="placeOrder()" [disabled]="cartItems.length === 0">Place Order</button>
+      </div>
+    </div>
+  </div>
+</section>
